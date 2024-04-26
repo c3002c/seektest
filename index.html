@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Job Search</title>
+  <style>
+    /* CSS樣式 */
+  </style>
+</head>
+<body>
+  <h1>Job Search</h1>
+  <form id="jobSearchForm">
+    <label for="location">Location:</label>
+    <input type="text" id="location" name="location" required><br><br>
+
+    <label for="keyword">Keyword:</label>
+    <input type="text" id="keyword" name="keyword" required><br><br>
+
+    <label for="excludeKeyword">Exclude Keyword:</label>
+    <input type="text" id="excludeKeyword" name="excludeKeyword"><br><br>
+
+    <button type="submit">Search</button>
+  </form>
+
+  <div id="jobResults">
+    <!-- 職缺結果將會在此顯示 -->
+  </div>
+
+  <script>
+    // JavaScript代碼
+    const form = document.getElementById('jobSearchForm');
+    const jobResultsContainer = document.getElementById('jobResults');
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const location = form.elements.location.value;
+      const keyword = form.elements.keyword.value;
+      const excludeKeyword = form.elements.excludeKeyword.value;
+
+      const url = `https://api.seek.com/jobs?location=${location}&keyword=${keyword}&excludeKeyword=${excludeKeyword}`;
+
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+
+        // 清空之前的結果
+        jobResultsContainer.innerHTML = '';
+
+        // 顯示新的結果
+        data.forEach(job => {
+          const jobLink = document.createElement('a');
+          jobLink.href = job.link;
+          jobLink.textContent = job.title;
+          jobResultsContainer.appendChild(jobLink);
+          jobResultsContainer.appendChild(document.createElement('br'));
+        });
+      } catch (error) {
+        console.error('Error fetching job data:', error);
+      }
+    });
+  </script>
+</body>
+</html>
